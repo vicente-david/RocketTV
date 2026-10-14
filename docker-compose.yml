@@ -1,0 +1,34 @@
+services:
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: rockettv
+      MYSQL_USER: rockettv
+      MYSQL_PASSWORD: rockettv_dev_pw
+      MYSQL_ROOT_PASSWORD: root_dev_pw
+    ports: ["3307:3306"]
+    volumes: [db_data:/var/lib/mysql]
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -urockettv -prockettv_dev_pw --silent"]
+      interval: 5s
+      retries: 30
+
+  backend:
+    build: ./backend
+    environment:
+      DB_HOST: db
+    ports: ["8000:8000"]
+    volumes: ["./backend:/app"]
+    depends_on:
+      db: { condition: service_healthy }
+
+  frontend:
+    build: ./frontend
+    environment:
+      API_PROXY_TARGET: http://backend:8000
+    ports: ["5173:5173"]
+    volumes: ["./frontend:/app", "/app/node_modules"]
+    depends_on: [backend]
+
+volumes:
+  db_data:
