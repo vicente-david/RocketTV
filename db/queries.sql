@@ -143,9 +143,13 @@ WHERE (T.StartDate >= '2026-01-01' AND T.StartDate < '2027-01-01');
 -- See all matches played
 -- We can group by team or tournament
 
-
 -- Search team/players
 -- Self explanatory, query players and teams with substring method or what not
+SELECT 'Team' AS Kind, TeamID AS ID, TeamName AS Name FROM Team
+WHERE TeamName LIKE '%abc%'
+UNION
+SELECT 'Player', PlayerID, Username FROM Player
+WHERE Username LIKE '%abc%' OR FName LIKE '%abc%' OR LName LIKE '%abc%';
 
 -- follow/unfollow team
 -- Updates the table (viewerfollowsteam)
@@ -158,7 +162,7 @@ UPDATE Viewer SET FavouriteTeamID = 2 WHERE UserID = 1;
 
 -- View followed team(s)
 -- See View team page, but restrict it to followed teams
-SELECT Tm.TeamName, P.Username, SUM(PPG.Goals) AS Goals, SUM(PPG.Assists) AS Assists
+SELECT Tm.TeamName, P.Username, SUM(PPG.Goals), SUM(PPG.Assists)
 FROM ViewerFollowsTeam F
 JOIN Team Tm ON Tm.TeamID = F.TeamID
 JOIN PlayerPlaysForTeam PPT ON PPT.TeamID = F.TeamID AND PPT.EndDate IS NULL
