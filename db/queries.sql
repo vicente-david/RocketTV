@@ -6,15 +6,6 @@
 -- calculate player total stats
 -- let playerID = 0
 -- Games, Goals, Assists, OTGoals, Demos, Shooting% (goals/totalshots), W/L (wins/total games), Score, Saves, Shots
-SELECT COUNT(*) AS Games, 
-    SUM(Goals), SUM(Assists), SUM(OTGoals), SUM(Demos),
-    SUM(Goals)/SUM(Shots), 
-    SUM(Score), SUM(Saves),
-    SUM(Shots)
-FROM PlayerPlaysGame PPG JOIN Game 
-ON PPG.GameID = Game.GameID
-WHERE PPG.PlayerID = 0;
-
 -- considering layerPlaysGame already have the stats 
 SELECT COUNT(*) AS Games,
     SUM(Goals), SUM(Assists), SUM(OTGoals), SUM(Demos),
@@ -187,7 +178,11 @@ ORDER BY T.StartDate DESC;
 
 -- View player leaderboards
 -- List all players with and order by a stat (function to be determined just denote f for now which takes all playerstats as input)
-SELECT P.PlayerID, P.Username, SUM(PPG.Goals) AS f   -- when we picks a formula, replace the SUM(PPG.Goals) with f(stats)
+-- function f to be determined, it will be a combination of goals, score, demos, saves, etc.
+-- like for example f(player0) := 2*goals + 3*demos
+-- then the 1st player would have the highest f value 
+-- for right now we'll just order by f(playerID) = 2*goals + 3*demos
+SELECT P.PlayerID, P.Username, 2*SUM(PPG.Goals) + 3*SUM(PPG.Demos) AS f   -- when we picks a formula, replace the SUM(PPG.Goals) with f(stats)
 FROM Player P JOIN PlayerPlaysGame PPG ON PPG.PlayerID = P.PlayerID
 GROUP BY P.PlayerID, P.Username
 ORDER BY f DESC;
