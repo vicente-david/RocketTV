@@ -208,7 +208,7 @@ SELECT 'Team' AS Kind, TeamID AS ID, TeamName AS Name FROM Team
 WHERE TeamName LIKE '%abc%'
 UNION
 SELECT 'Player', PlayerID, Username FROM Player
-WHERE Username LIKE '%abc%' OR FName LIKE '%abc%' OR LName LIKE '%abc%';
+WHERE Username LIKE '%abc%' OR Name LIKE '%abc%';
 
 -- follow/unfollow team
 -- Updates the table (viewerfollowsteam)

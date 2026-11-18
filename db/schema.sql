@@ -20,15 +20,14 @@ CREATE TABLE Team (
 CREATE TABLE Player (
     PlayerID        INT             NOT NULL AUTO_INCREMENT,
     Username        VARCHAR(100)    NOT NULL UNIQUE,
-    FName           VARCHAR(50)     NOT NULL,
-    LName           VARCHAR(50)     NOT NULL,
+    Name           VARCHAR(50),
     OriginCountry   VARCHAR(50),
     DateOfBirth     DATE,
     PRIMARY KEY (PlayerID)
 );
 
 CREATE TABLE Season (
-    SeasonID        INT     NOT NULL AUTO_INCREMENT,
+    SeasonID        INT     NOT NULL CHECK (SeasonID BETWEEN 2016 and 2999),
     WinningTeamID   INT,
     PRIMARY KEY (SeasonID),
     FOREIGN KEY (WinningTeamID) REFERENCES Team(TeamID)
@@ -77,7 +76,7 @@ CREATE TABLE Major (
 CREATE TABLE Open (
     TournamentID    INT             NOT NULL,
     SeasonID        INT             NOT NULL,
-    SplitNUm        INT             NOT NULL,
+    SplitNum        INT             NOT NULL,
     OpenNum         INT             NOT NULL,
     RegionName      VARCHAR(100)    NOT NULL,
     PRIMARY KEY (TournamentID), 
@@ -157,7 +156,9 @@ CREATE TABLE PlayerPlaysGame (
     FOREIGN KEY (TournamentID, MatchID, GameID) REFERENCES Game(TournamentID, MatchID, GameID)
         ON DELETE CASCADE,
     FOREIGN KEY (PlayerID) REFERENCES Player(PlayerID),
-    FOREIGN KEY (TeamID) REFERENCES Team(TeamID)
+    FOREIGN KEY (TeamID) REFERENCES Team(TeamID),
+    CHECK (Goals <= Shots),
+    CHECK (OTGoals <= Goals)
 );
 
 CREATE TABLE Admin (
