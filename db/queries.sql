@@ -104,7 +104,7 @@ FROM Split S JOIN Major M ON
     (S.SplitNum = M.SplitNum)
 JOIN Tournament T ON
     (T.TournamentID = M.TournamentID)
-WHERE (T.StartDate >= '2026-01-01' AND T.StartDate < '2027-01-01' AND S.splitNum = 2)
+WHERE (T.StartDate >= '2026-01-01' AND T.StartDate < '2027-01-01' AND S.SplitNum = 2)
 
 -- say split 2 opens in 2026
 SELECT *
@@ -113,21 +113,40 @@ FROM Split S JOIN Open O ON
     (S.SplitNum = O.SplitNum)
 JOIN Tournament T ON
     (T.TournamentID = O.TournamentID)
-WHERE (T.StartDate >= '2026-01-01' AND T.StartDate < '2027-01-01' AND S.splitNum = 2);
+WHERE (T.StartDate >= '2026-01-01' AND T.StartDate < '2027-01-01' AND S.SplitNum = 2);
 
 -- if we want all tournaments, worlds + majors + opens
 -- don't restrict to the split num for majors and opens, 
 -- and we can join directly
+-- ex: all opens played in 2026
 SELECT * 
 FROM Tournament T JOIN Open O ON
-    (T.Tournament ID = O.TournamentID)
+    (T.TournamentID = O.TournamentID)
+WHERE (T.StartDate >= '2026-01-01' AND T.StartDate < '2027-01-01')
+ORDER BY SplitNum, OpenNum, RegionName;
+
+-- all tournaments played in 2026 , worlds + majors + opens
+SELECT TournamentID
+FROM Tournament T JOIN Open O ON
+    (T.TournamentID = O.TournamentID)
+WHERE (T.StartDate >= '2026-01-01' AND T.StartDate < '2027-01-01')
+ORDER BY SplitNum, OpenNum, RegionName;
+UNION
+SELECT TournamentID
+FROM Tournament T JOIN Major M ON
+    (T.TournamentID = M.TournamentID)
+WHERE (T.StartDate >= '2026-01-01' AND T.StartDate < '2027-01-01')
+ORDER BY SplitNum;
+UNION
+SELECT TournamentID
+FROM Tournament T JOIN Worlds W ON
+    (T.TournamentID = W.TournamentID)
 WHERE (T.StartDate >= '2026-01-01' AND T.StartDate < '2027-01-01');
-
-
 
 
 -- Tournament standings
 -- Query a specific tournament id/year and then calculate points for each team for that tournament (ex: worlds 2026, query 2026 worlds, and then determine points)
+
 
 -- View Team page
 -- Query all players for a specific team and list their stats
