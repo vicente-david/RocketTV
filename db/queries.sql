@@ -191,10 +191,26 @@ ORDER BY T.StartDate DESC;
 
 -- View player leaderboards
 -- List all players with and order by a stat (function to be determined just denote f for now which takes all playerstats as input)
+SELECT P.PlayerID, P.Username, SUM(PPG.Goals) AS f   -- when we picks a formula, replace the SUM(PPG.Goals) with f(stats)
+FROM Player P JOIN PlayerPlaysGame PPG ON PPG.PlayerID = P.PlayerID
+GROUP BY P.PlayerID, P.Username
+ORDER BY f DESC;
 
 -- View match and game results
 -- See all matches played
 -- We can group by team or tournament
+SELECT SM.TournamentID, SM.MatchID, T1.TeamName AS Team1, T2.TeamName AS Team2,
+    SM.Team1Score, SM.Team2Score, SM.BestOf
+FROM SeriesMatch SM
+JOIN Team T1 ON T1.TeamID = SM.Team1ID
+JOIN Team T2 ON T2.TeamID = SM.Team2ID
+ORDER BY SM.TournamentID, SM.MatchID;
+-- by team (team 1): add WHERE SM.Team1ID = 1 OR SM.Team2ID = 1
+-- by tournament (tournament 1): add WHERE SM.TournamentID = 1
+-- games of one match
+SELECT GameID, Team1Score, Team2Score, Date
+FROM Game WHERE TournamentID = 1 AND MatchID = 1;
+
 
 -- Search team/players
 -- Self explanatory, query players and teams with substring method or what not
