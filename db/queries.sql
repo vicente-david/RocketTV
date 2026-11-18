@@ -23,36 +23,35 @@ WHERE PlayerID = 0;
 -- then just case analysis, we need if team1 was player and their score was > team 2
 -- or if team2 was player and their score was > team 1
 SELECT COUNT(*)
-FROM PlayerPlaysGame PPG JOIN GAME G ON
+FROM PlayerPlaysGame PPG JOIN Game G ON
     PPG.TournamentID = G.TournamentID AND
-    PPG.GameID = G.GameID
+    PPG.GameID = G.GameID AND
     PPG.MatchID = G.MatchID
-JOIN SeriesMatch SM ON Game G
+JOIN SeriesMatch SM ON
     G.TournamentID = SM.TournamentID AND
     G.MatchID = SM.MatchID
 WHERE PPG.PlayerID = 0
 AND (
-    (PPG.TeamID = SM.Team1ID AND G.Team1Score > G.Team2Score) 
+    (PPG.TeamID = SM.Team1ID AND G.Team1Score > G.Team2Score)
     OR
     (PPG.TeamID = SM.Team2ID AND G.Team2Score > G.Team1Score)
     );
 
 -- calculate number of losses (flip the signs on the above query)
 SELECT COUNT(*)
-FROM PlayerPlaysGame PPG JOIN GAME G ON
+FROM PlayerPlaysGame PPG JOIN Game G ON
     PPG.TournamentID = G.TournamentID AND
-    PPG.GameID = G.GameID
+    PPG.GameID = G.GameID AND
     PPG.MatchID = G.MatchID
-JOIN SeriesMatch SM ON Game G
+JOIN SeriesMatch SM ON
     G.TournamentID = SM.TournamentID AND
     G.MatchID = SM.MatchID
 WHERE PPG.PlayerID = 0
 AND (
-    (PPG.TeamID = SM.Team1ID AND G.Team1Score < G.Team2Score) 
+    (PPG.TeamID = SM.Team1ID AND G.Team1Score < G.Team2Score)
     OR
     (PPG.TeamID = SM.Team2ID AND G.Team2Score < G.Team1Score)
     );
-
 -- win/loss is just win/ totalGames easy to calculate in application
 
 
