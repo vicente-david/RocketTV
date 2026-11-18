@@ -15,6 +15,15 @@ FROM PlayerPlaysGame PPG JOIN Game
 ON PPG.GameID = Game.GameID
 WHERE PPG.PlayerID = 0;
 
+-- considering layerPlaysGame already have the stats 
+SELECT COUNT(*) AS Games,
+    SUM(Goals), SUM(Assists), SUM(OTGoals), SUM(Demos),
+    SUM(Goals)/NULLIF(SUM(Shots),0),
+    SUM(Score), SUM(Saves),
+    SUM(Shots)
+FROM PlayerPlaysGame
+WHERE PlayerID = 0;
+
 -- calculate number of wins
 -- for a player with id = 0
 -- to uniquely identify a game, we need tournament id, game id, match id
@@ -61,7 +70,8 @@ AND (
 
 -- Register account
 -- Creates new entry
-
+INSERT INTO Viewer (Username, Password, Email)
+VALUES ('username', 'password', 'example@email.com');
 
 -- Login
 -- Checks against existing entry
@@ -82,6 +92,13 @@ SELECT EXISTS(
 
 -- Update account info
 -- Updates existing entry and queries against existing entry
+UPDATE Viewer
+SET Email = 'new@email.com', Password = 'newpassword'
+WHERE UserID = 1;
+
+SELECT UserID, Username, Email, FavouriteTeamID
+FROM Viewer
+WHERE UserID = 1;
 
 -- Browse tournament and brackets (similar to the screenshot)
 -- Query all tournaments, sort in order by year descending
@@ -129,12 +146,29 @@ WHERE (T.StartDate >= '2026-01-01' AND T.StartDate < '2027-01-01');
 
 -- Tournament standings
 -- Query a specific tournament id/year and then calculate points for each team for that tournament (ex: worlds 2026, query 2026 worlds, and then determine points)
+SELECT Tm.TeamName, TPT.Seed, TPT.Placement, TPT.Points
+FROM TeamParticipatesInTournament TPT JOIN Team Tm ON Tm.TeamID = TPT.TeamID
+WHERE TPT.TournamentID = 1
+ORDER BY TPT.Points DESC;
 
 -- View Team page
 -- Query all players for a specific team and list their stats
+SELECT P.PlayerID, P.Username, PPT.Role,
+    SUM(PPG.Goals), SUM(PPG.Assists), SUM(PPG.Saves), SUM(PPG.Shots)
+FROM PlayerPlaysForTeam PPT
+JOIN Player P ON P.PlayerID = PPT.PlayerID
+LEFT JOIN PlayerPlaysGame PPG ON PPG.PlayerID = P.PlayerID AND PPG.TeamID = PPT.TeamID
+WHERE PPT.TeamID = 1 AND PPT.EndDate IS NULL
+GROUP BY P.PlayerID, P.Username, PPT.Role;
 
 -- View player page & player career stats
 -- Inspect a specific player, and their stats, find the tournaments they played in
+SELECT * FROM Player WHERE PlayerID = 1;
+-- stats: use the player total stats query above
+SELECT DISTINCT T.TournamentID, T.StartDate, T.EndDate
+FROM PlayerPlaysGame PPG JOIN Tournament T ON T.TournamentID = PPG.TournamentID
+WHERE PPG.PlayerID = 1
+ORDER BY T.StartDate DESC;
 
 -- View player leaderboards
 -- List all players with and order by a stat (function to be determined just denote f for now which takes all playerstats as input)
