@@ -13,7 +13,7 @@ SELECT COUNT(*) AS Games,
     SUM(Score), SUM(Saves),
     SUM(Shots)
 FROM PlayerPlaysGame
-WHERE PlayerID = 0;
+WHERE PlayerID = 4;
 
 -- calculate number of wins
 -- for a player with id = 0
@@ -30,7 +30,7 @@ FROM PlayerPlaysGame PPG JOIN Game G ON
 JOIN SeriesMatch SM ON
     G.TournamentID = SM.TournamentID AND
     G.MatchID = SM.MatchID
-WHERE PPG.PlayerID = 0
+WHERE PPG.PlayerID = 4
 AND (
     (PPG.TeamID = SM.Team1ID AND G.Team1Score > G.Team2Score)
     OR
@@ -46,7 +46,7 @@ FROM PlayerPlaysGame PPG JOIN Game G ON
 JOIN SeriesMatch SM ON
     G.TournamentID = SM.TournamentID AND
     G.MatchID = SM.MatchID
-WHERE PPG.PlayerID = 0
+WHERE PPG.PlayerID = 4
 AND (
     (PPG.TeamID = SM.Team1ID AND G.Team1Score < G.Team2Score)
     OR
@@ -65,17 +65,16 @@ VALUES ('username', 'password', 'example@email.com');
 
 -- Login
 -- Checks against existing entry
--- let username = '0'  and password = '123'
 SELECT EXISTS(
     SELECT UserID
     FROM Admin
-    WHERE Username = '0' AND Password = '123'
+    WHERE Username = 'TheBestPLAYER267' AND Password = 'rocketleague420'
 
     UNION
 
     SELECT UserID
     FROM Viewer
-    WHERE Username = '0' AND Password = '123'
+    WHERE Username = 'TheBestPLAYER267' AND Password = 'rocketleague420'
 );
 
 
@@ -205,10 +204,10 @@ FROM Game WHERE TournamentID = 1 AND MatchID = 1;
 -- Search team/players
 -- Self explanatory, query players and teams with substring method or what not
 SELECT 'Team' AS Kind, TeamID AS ID, TeamName AS Name FROM Team
-WHERE TeamName LIKE '%abc%'
+WHERE TeamName LIKE '%ne%'
 UNION
 SELECT 'Player', PlayerID, Username FROM Player
-WHERE Username LIKE '%abc%' OR Name LIKE '%abc%';
+WHERE Username LIKE '%ne%' OR Name LIKE '%ne%';
 
 -- follow/unfollow team
 -- Updates the table (viewerfollowsteam)
