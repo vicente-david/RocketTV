@@ -122,7 +122,7 @@ FROM Split S JOIN Major M ON
     (S.SplitNum = M.SplitNum)
 JOIN Tournament T ON
     (T.TournamentID = M.TournamentID)
-WHERE (T.StartDate >= '2026-01-01' AND T.StartDate < '2027-01-01' AND S.SplitNum = 2)
+WHERE (T.StartDate >= '2026-01-01' AND T.StartDate < '2027-01-01' AND S.SplitNum = 2);
 
 -- say split 2 opens in 2026
 SELECT *
@@ -144,22 +144,18 @@ WHERE (T.StartDate >= '2026-01-01' AND T.StartDate < '2027-01-01')
 ORDER BY SplitNum, OpenNum, RegionName;
 
 -- all tournaments played in 2026 , worlds + majors + opens
-SELECT TournamentID
-FROM Tournament T JOIN Open O ON
-    (T.TournamentID = O.TournamentID)
-WHERE (T.StartDate >= '2026-01-01' AND T.StartDate < '2027-01-01')
-ORDER BY SplitNum, OpenNum, RegionName;
+SELECT T.TournamentID, T.StartDate, 'Worlds' AS Type
+FROM Tournament T JOIN Worlds W ON T.TournamentID = W.TournamentID
+WHERE T.StartDate >= '2026-01-01' AND T.StartDate < '2027-01-01'
 UNION
-SELECT TournamentID
-FROM Tournament T JOIN Major M ON
-    (T.TournamentID = M.TournamentID)
-WHERE (T.StartDate >= '2026-01-01' AND T.StartDate < '2027-01-01')
-ORDER BY SplitNum;
+SELECT T.TournamentID, T.StartDate, 'Major'
+FROM Tournament T JOIN Major M ON T.TournamentID = M.TournamentID
+WHERE T.StartDate >= '2026-01-01' AND T.StartDate < '2027-01-01'
 UNION
-SELECT TournamentID
-FROM Tournament T JOIN Worlds W ON
-    (T.TournamentID = W.TournamentID)
-WHERE (T.StartDate >= '2026-01-01' AND T.StartDate < '2027-01-01');
+SELECT T.TournamentID, T.StartDate, 'Open'
+FROM Tournament T JOIN `Open` O ON T.TournamentID = O.TournamentID
+WHERE T.StartDate >= '2026-01-01' AND T.StartDate < '2027-01-01'
+ORDER BY StartDate DESC;
 
 
 -- Tournament standings
