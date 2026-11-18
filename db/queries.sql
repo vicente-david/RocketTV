@@ -1,3 +1,4 @@
+-- SQLBook: Code
 
 -- Miscellaneous functionalities
 
@@ -148,9 +149,20 @@ WHERE (T.StartDate >= '2026-01-01' AND T.StartDate < '2027-01-01');
 
 -- follow/unfollow team
 -- Updates the table (viewerfollowsteam)
+INSERT INTO ViewerFollowsTeam (UserID, TeamID) VALUES (1, 2);
+DELETE FROM ViewerFollowsTeam WHERE UserID = 1 AND TeamID = 2;
 
 -- Set favourite team
 -- Updates favourite team entry
+UPDATE Viewer SET FavouriteTeamID = 2 WHERE UserID = 1;
 
 -- View followed team(s)
 -- See View team page, but restrict it to followed teams
+SELECT Tm.TeamName, P.Username, SUM(PPG.Goals) AS Goals, SUM(PPG.Assists) AS Assists
+FROM ViewerFollowsTeam F
+JOIN Team Tm ON Tm.TeamID = F.TeamID
+JOIN PlayerPlaysForTeam PPT ON PPT.TeamID = F.TeamID AND PPT.EndDate IS NULL
+JOIN Player P ON P.PlayerID = PPT.PlayerID
+LEFT JOIN PlayerPlaysGame PPG ON PPG.PlayerID = P.PlayerID AND PPG.TeamID = F.TeamID
+WHERE F.UserID = 1
+GROUP BY Tm.TeamName, P.Username;
