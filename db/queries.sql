@@ -228,3 +228,8 @@ JOIN Player P ON P.PlayerID = PPT.PlayerID
 LEFT JOIN PlayerPlaysGame PPG ON PPG.PlayerID = P.PlayerID AND PPG.TeamID = F.TeamID
 WHERE F.UserID = 1
 GROUP BY Tm.TeamName, P.Username;
+
+
+-- Stored Procedure Test Calls
+CALL GetAllTeams;
+CALL GetTeamsByRegion('EU');

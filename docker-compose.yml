@@ -11,6 +11,7 @@ services:
       - db_data:/var/lib/mysql
       - ./db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
       - ./db/seed.sql:/docker-entrypoint-initdb.d/02_seed.sql 
+      - ./db/procedures.sql:/docker-entrypoint-initdb.d/03_procedures.sql 
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -urockettv -prockettv_dev_pw --silent"]
       interval: 5s
