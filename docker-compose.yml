@@ -7,7 +7,10 @@ services:
       MYSQL_PASSWORD: rockettv_dev_pw
       MYSQL_ROOT_PASSWORD: root_dev_pw
     ports: ["3307:3306"]
-    volumes: [db_data:/var/lib/mysql]
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+      - ./db/seed.sql:/docker-entrypoint-initdb.d/02_seed.sql 
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -urockettv -prockettv_dev_pw --silent"]
       interval: 5s

@@ -20,14 +20,9 @@ cd RocketTV
 docker compose up --build
 ```
 
-Create our own admin login (open a second terminal in the repo folder):
+Admin accounts come from ``db/seed.sql``. So no ``createsuperuser`` step is needed.
 
-```bash
-docker compose exec backend python manage.py createsuperuser
-```
-
-Note that each one of us has our own local database, so data we add on our own computer is
-not shared unless we migrate and push through git.
+*NOTE:* Our sample data is shared through ``db/seed.sql``. Go to **Step 4** to see the required steps for how to edit our tables or data.
 
 After all the steps above, when we want to run the app, all we need to do is run `docker compose up`.
 We stop with `Ctrl+C`.
@@ -36,13 +31,14 @@ We stop with `Ctrl+C`.
 
 ```
 docker-compose.yml     db + backend + frontend services
+db/
+  schema.sql           Contains the tables for our database
+  seed.sql             Contains the data for our tables.
+  queries.sql          Contains all of our queries needed for our app features. NOT loaded automaticcaly and running it WILL change data.
 backend/
   config/              Django settings and root URLs
   api/
-    models.py          database tables (from our EERD)
-    migrations/        schema history (database table changes, make sure to makemigrate then commit)
     views.py, urls.py  API endpoints under /api/
-    admin.py           admin panel registration
 frontend/
   src/App.jsx          React entry page
   vite.config.js       sends /api requests to Django
@@ -50,22 +46,15 @@ frontend/
 
 ## 4. Changing the database
 
-We use Django migrations, so the tables are defined in `backend/api/models.py`.
+We can update/modify our tables, and their data by modifying ``db/schema.sql``, which contains our tables, or ``db/seed.sql``, which contains our sample data. 
 
-1. Edit `backend/api/models.py`.
-2. Create the migration:
-   ```bash
-   docker compose exec backend python manage.py makemigrations
-   ```
-3. Apply it by restarting the backend (migrations run on start):
-   ```bash
-   docker compose restart backend
-   ```
-4. Commit changes to Git
+1. Edit ``schema.sql`` or ``seed.sql`` as needed.
+2. ``docker compose down -v`` which stops and removes the containers. -v also deletes the volumes. This is necessary because MySQL only runs the initialization files on empty volumes. If a volume is non-empty, it won't "update" it. 
+3. ``docker compose up --build`` to restart the initialization.
+4. Commit the SQL files. When any member pulls a change to them, they must also repeat **step 2**. 
 
-When somebody else changes the database, we pull migration using `docker compose restart backend`.
-
-If 2 of us create migrations at the same time Django reports conflicting
-migrations (sort of like git merge conflict). After resolving, run the command `python manage.py makemigrations --merge`.
-
-Note that `AUTH_USER_MODEL` is `api.User` (Admin / Viewer roles). Don't change it once migrations exist.
+*NOTE:* ``schema.sql``and ``seed.sql`` load automatically on a fresh database because of the following lines 12-13 in ``docker-compose.yml``: 
+```
+- ./db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+- ./db/seed.sql:/docker-entrypoint-initdb.d/02_seed.sql 
+```

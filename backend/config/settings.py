@@ -41,8 +41,10 @@ INSTALLED_APPS = [
     'api',
 ]
 
-AUTH_USER_MODEL = "api.User"
-
+# AUTH_USER_MODEL = "api.User"
+# No longer using User, Django will fall back to its built-in user model. 
+# We will use our own Admin/Viewer models, but Django internally expects one to exist,
+# so that's why we let it default.
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

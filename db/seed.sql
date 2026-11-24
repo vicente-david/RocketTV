@@ -1,4 +1,4 @@
-USE rockettv_report;
+USE rockettv;
 
 INSERT INTO Region(RegionName) VALUES
     ('NA'),

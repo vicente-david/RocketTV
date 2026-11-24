@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS rockettv_report;
-CREATE DATABASE rockettv_report;
-USE rockettv_report;
+DROP DATABASE IF EXISTS rockettv;
+CREATE DATABASE rockettv;
+USE rockettv;
 
 CREATE TABLE Region (
     RegionName  VARCHAR(100)    NOT NULL,
