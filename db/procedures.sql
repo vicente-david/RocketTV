@@ -54,12 +54,15 @@ END //
 
 CREATE PROCEDURE GetPlayer(IN p_player_id INT)
 BEGIN
-    SELECT 
-    Username,
-    Name,
-    OriginCountry,
-    TIMESTAMPDIFF(YEAR, DateOfBirth, CURDATE()) AS Age
-    FROM Player 
-    WHERE PlayerID = p_player_id;
+    SELECT P.Username, P.Name, P.OriginCountry,
+       TIMESTAMPDIFF(YEAR, P.DateOfBirth, CURDATE()) AS Age,
+       T.TeamID   AS CurrentTeamID,
+       T.TeamName AS CurrentTeamName
+FROM Player P
+LEFT JOIN PlayerPlaysForTeam PPT
+       ON PPT.PlayerID = P.PlayerID AND PPT.EndDate IS NULL
+LEFT JOIN Team T
+       ON T.TeamID = PPT.TeamID
+WHERE P.PlayerID = p_player_id;
 END //
 DELIMITER ;

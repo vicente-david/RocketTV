@@ -22,7 +22,6 @@ export default function App() {
       {!error && !health && <p>Checking…</p>}
       <TeamsByRegion region="EU" />
       <TeamsByRegion region="NA" />
-      <TeamsByRegion region="EU" />
       <TeamsByRegion region="MENA" />
     </main>
   )
