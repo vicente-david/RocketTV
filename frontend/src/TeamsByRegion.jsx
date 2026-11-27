@@ -19,8 +19,8 @@ export default function TeamsByRegion({ region }) {
       {error && <p>Couldn't load teams: {error}</p>}
       <ul>
         {teams.map((team) => (
-          <li key={team.team_id}>
-            {team.team_name} ({team.region_name})
+          <li key={team.TeamID}>
+            {team.TeamName} ({team.RegionName})
           </li>
         ))}
       </ul>

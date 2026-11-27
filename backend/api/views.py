@@ -1,6 +1,21 @@
 from django.db import connection          # Django's link to MySQL (settings.py configures it)
 from django.http import JsonResponse      # turns Python data into a JSON response
 
+from decimal import Decimal
+
+def rows_as_dicts(cursor):
+    # cursor.description describes each column of the result
+    # col[0] is its name, which is the AS name from the procedures
+    columns = [col[0] for col in cursor.description]
+    results = []
+    for row in cursor.fetchall():
+        # mysql returns SUM results as Decimal numbers, which would
+        # appear in the JSON as text. convert them to numbers
+        values = [float(v) if isinstance(v, Decimal) else v for v in row]
+        # zip pairs each column name with its value: ("Goals", 3), ("Wins", 3), etc
+        results.append(dict(zip(columns, values)))
+    return results
+
 def health(request):                      # a "view": takes the request, returns a response
     with connection.cursor() as cursor:   # open a cursor = a handle for running SQL
         cursor.execute("SELECT VERSION()")      # send SQL to MySQL
@@ -10,17 +25,25 @@ def health(request):                      # a "view": takes the request, returns
 def team(request):
     with connection.cursor() as cursor:
         cursor.callproc("GetAllTeams")
-        rows = cursor.fetchall()
-    results = [] # the empty list
-    for row in rows:
-        results.append({"team_id": row[0], "team_name": row[1], "region_name": row[2]})
+        results = rows_as_dicts(cursor)
     return JsonResponse({"teams": results})
 
 def teams_by_region(request, region):
     with connection.cursor() as cursor:
         cursor.callproc("GetTeamsByRegion", [region])
-        rows = cursor.fetchall()
-    results = []
-    for row in rows:
-        results.append({"team_id": row[0], "team_name": row[1], "region_name": row[2]})
+        results = rows_as_dicts(cursor)
     return JsonResponse({"teams": results})
+
+def player_stats(request, player_id):
+    with connection.cursor() as cursor:
+        cursor.callproc("GetPlayerCareerStats", [player_id])
+        stats = rows_as_dicts(cursor)[0]   # one row, so take the first
+    return JsonResponse({"player_id": player_id, "stats": stats})
+
+def player(request, player_id):
+    with connection.cursor() as cursor:
+        cursor.callproc("GetPlayer", [player_id])
+        details = rows_as_dicts(cursor)
+    if not details:
+        return JsonResponse({"error": "Player not found."}, status=404)
+    return JsonResponse({"player_id": player_id, "details": details})
