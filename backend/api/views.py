@@ -37,7 +37,7 @@ def teams_by_region(request, region):
 def player_stats(request, player_id):
     with connection.cursor() as cursor:
         cursor.callproc("GetPlayerCareerStats", [player_id])
-        stats = rows_as_dicts(cursor)[0]   # one row, so take the first
+        stats = rows_as_dicts(cursor)[0]
     return JsonResponse({"player_id": player_id, "stats": stats})
 
 def player(request, player_id):
@@ -46,4 +46,4 @@ def player(request, player_id):
         details = rows_as_dicts(cursor)
     if not details:
         return JsonResponse({"error": "Player not found."}, status=404)
-    return JsonResponse({"player_id": player_id, "details": details})
+    return JsonResponse({"player_id": player_id, "details": details[0]})
