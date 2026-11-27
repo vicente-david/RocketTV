@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import Teams from './Teams'
+import TeamsByRegion from './TeamsByRegion'
 
 export default function App() {
   const [health, setHealth] = useState(null)
@@ -14,9 +16,14 @@ export default function App() {
   return (
     <main>
       <h1>Rocket.tv</h1>
+      <Teams/>
       {error && <p>Backend unreachable: {error}</p>}
       {health && <p>Django is connected to MySQL {health.mysql_version}</p>}
       {!error && !health && <p>Checking…</p>}
+      <TeamsByRegion region="EU" />
+      <TeamsByRegion region="NA" />
+      <TeamsByRegion region="EU" />
+      <TeamsByRegion region="MENA" />
     </main>
   )
 }
