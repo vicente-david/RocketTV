@@ -18,8 +18,8 @@ export default function Teams() {
       {error && <p>Couldn't load teams: {error}</p>}
       <ul>
         {teams.map((team) => (
-          <li key={team.TeamID}>
-            {team.TeamName} ({team.RegionName})
+          <li key={team.team_id}>
+            {team.team_name} ({team.region_name})
           </li>
         ))}
       </ul>

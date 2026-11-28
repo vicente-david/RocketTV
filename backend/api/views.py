@@ -16,6 +16,11 @@ def rows_as_dicts(cursor):
         results.append(dict(zip(columns, values)))
     return results
 
+def call(procedure, params=()):
+    with connection.cursor() as cursor:
+        cursor.callproc(procedure, params)
+        return rows_as_dicts(cursor)
+
 def health(request):                      # a "view": takes the request, returns a response
     with connection.cursor() as cursor:   # open a cursor = a handle for running SQL
         cursor.execute("SELECT VERSION()")      # send SQL to MySQL
@@ -23,27 +28,17 @@ def health(request):                      # a "view": takes the request, returns
     return JsonResponse({"status": "ok", "mysql_version": version})
 
 def team(request):
-    with connection.cursor() as cursor:
-        cursor.callproc("GetAllTeams")
-        results = rows_as_dicts(cursor)
-    return JsonResponse({"teams": results})
+    return JsonResponse({"teams": call("GetAllTeams")})
 
 def teams_by_region(request, region):
-    with connection.cursor() as cursor:
-        cursor.callproc("GetTeamsByRegion", [region])
-        results = rows_as_dicts(cursor)
-    return JsonResponse({"teams": results})
-
-def player_stats(request, player_id):
-    with connection.cursor() as cursor:
-        cursor.callproc("GetPlayerCareerStats", [player_id])
-        stats = rows_as_dicts(cursor)[0]
-    return JsonResponse({"player_id": player_id, "stats": stats})
+    return JsonResponse({"teams": call("GetTeamsByRegion", [region])})
 
 def player(request, player_id):
-    with connection.cursor() as cursor:
-        cursor.callproc("GetPlayer", [player_id])
-        details = rows_as_dicts(cursor)
+    details = call("GetPlayer", [player_id])
     if not details:
         return JsonResponse({"error": "Player not found."}, status=404)
-    return JsonResponse({"player_id": player_id, "details": details[0]})
+    return JsonResponse({
+        "player": details[0],
+        "totals": call("GetPlayerCareerStats", [player_id])[0],
+        "teams":  call("GetPlayerTeamHistory", [player_id]),
+    })
